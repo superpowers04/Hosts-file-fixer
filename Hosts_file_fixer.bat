@@ -114,7 +114,7 @@ goto start
 del %imputFile%
 echo hosts.bak was deleted
 pause
-goto 
+goto start
 
 :exit
 exit
