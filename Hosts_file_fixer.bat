@@ -2,7 +2,7 @@
 		rem = information about what the following step does.
 		rem - ensures that environment variables used in this script are removed from memory when the script closes
 setlocal enabledelayedexpansion
-		rem - Checks to see if it is ran as Administrator. If not tells you to run it as admin
+		rem - Checks to see if it is ran as Administrator. If not, tells you to run it as admin
 net session >nul 2>&1
 if %errorLevel% == 0 (
 	goto start
