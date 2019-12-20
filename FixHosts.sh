@@ -97,8 +97,8 @@ read
 
 clear
 # Replaces strings
-sed -i "s/sessionserver.mojang.com/whywudyouvisher.com/gI" /etc/hosts 
-sed -i "s/authserver.mojang.com/notaealrstide.swASA/gI" /etc/hosts 
+sed -i "s/sessionserver.mojang.com/whywudyouvisher.com/" /etc/hosts 
+sed -i "s/authserver.mojang.com/notaealrstide.swASA/" /etc/hosts 
 
 # All Done
 
