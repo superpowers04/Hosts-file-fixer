@@ -2,7 +2,7 @@
 
 # Hello, I noticed you opened this file, You might want to open it through terminal instead
 # To make it executable on Linux type "chmod +x (directory to file)/FixHosts.sh"
-# Then to run type "sudo (directory to file)/FixHosts.sh"
+# To run type "sudo (directory to file)/FixHosts.sh"
 # You will be prompted for a password, If your typed letters/characters appear blank then that is normal
 # On MacOS the Password is normally your system's password
 
@@ -20,7 +20,7 @@ if [[ $( touch /etc/hosts; echo $? ) == 1 ]]
 then
 	clear
 
-	if [[ $( zenity --error --text="File needs to be run in terminal under Root!"; echo $? ) != 0 ]]
+	if [[ $( zenity --error --title="Hosts File Fixer Error" --text="File needs to be run in terminal under Root!" --width=300; echo $? ) != 0 ]]
 	then 
 		clear
 		echo "File needs to be run as root,"
@@ -37,72 +37,83 @@ then
 fi
 
 
-
-#Cut backup restore feature, cut due to read command not working correctly
-
-# if [[ -e "/etc/hostsbak" ]] 
-# then
-# 	clear
-# 	echo "A backup file from a previous fix(Or restore), Would you like to restore that backup?"
-# 	echo "Press enter to continue, Otherwise enter 'n' or 'no' to skip or "
-# 	echo "if you don't understand what this means"
-# 	read key
-
-# 	clear
-# 	echo $key
-# 	if [[ "$key" -eq "n" || "$key" -eq "no" ]]
-# 	then
-# 		cp /etc/hosts /tmp/hostsbak
-# 		cp /etc/hostsbak /etc/hosts
-# 		mv /tmp/hostsbak /etc/hostsbak
-# 		echo "All finished, Backup restored..."
-# 		read
-# 		exit
-# 	fi
-
-# fi
-
-
 #Checks for the actual issue, If not found, display message below
+
 
 cat /etc/hosts | grep "mojang"
 if [[ $( echo $? ) == 1 ]]
  then
-	clear
-	echo "Hosts file is clean, No actions taken"
-	echo "Press enter to exit"
-	read
-	exit
 
+ 	zenerr=$(zenity --info --title="Hosts File Fixer" --text="/etc/hosts is clean, No actions taken" --width 200; echo $?)
+	clear
+	if [[ ${zenerr} != 0 && ${zenerr} != 1  ]]
+	then 
+		clear
+		echo "/etc/hosts is clean, No actions taken"
+		echo "Press enter to exit"
+		read
+		exit
+	else
+		exit
+	fi
 fi
 
 
-clear
-echo ""
-echo "Your Hosts file contains the following, which redirect Mojang Authentication to the IP shown"
-echo "---------------------------"
-cat /etc/hosts | grep "mojang"
-echo "---------------------------"
-echo ""
-echo "This script will remove the Mojang redirects from your hosts file"
-echo ""
-echo ""
-echo -n "Press enter to continue, to exit just close out of this window or hold Ctrl and C at the same time"
+zenexicod=$(zenity --question --title="Hosts File Fixer" --text="Your Hosts file contains the following, which redirect Mojang Authentication to the IP shown\n $(cat /etc/hosts | grep "mojang")\nThis script will remove the Mojang redirects from your hosts file\n Do you want to continue?" --width=500; echo $?)
+if [[ $( echo ${zenexicod} ) == 1 ]]
+	then 
+		exit
+fi
+if [[ $( echo ${zenexicod} ) != 0 ]]; then
+	clear
+	echo ""
+	echo "Your Hosts file contains the following, which redirect Mojang Authentication to the IP shown"
+	echo "---------------------------"
+	cat /etc/hosts | grep "mojang"
+	echo "---------------------------"
+	echo ""
+	echo "This script will remove the Mojang redirects from your hosts file"
+	echo ""
+	echo ""
+	echo -n "Press enter to continue, to exit just close out of this window or hold Ctrl and C at the same time"
+	read
+
+	fi
+
+
+
+
+
+
 read
-
-
-
 
 
 
 clear
 # Replaces strings
-sed -i "s/sessionserver.mojang.com/whywudyouvisher.com/" /etc/hosts 
-sed -i "s/authserver.mojang.com/notaealrstide.swASA/" /etc/hosts 
 
-# All Done
+sedd1=$(sed -i "s/sessionserver.mojang.com/whywudyouvisher.com/" /etc/hosts; echo $?)
+sedd2=$(sed -i "s/authserver.mojang.com/notaealrstide.swASA/" /etc/hosts; echo $?)
 
-echo "Done, try signing in again, If it works change your password."
-echo -n "Press Enter to exit..."
-read
-exit
+if [[ $sedd1 == 0 && $sedd2 == 0 ]]
+then
+
+exittext="Done.\nYou should be able to sign in now, If you can then it is recommended to change your password"
+zenmessdia="info"
+else
+exittext="Errors might have occured, If you see any errors above please let the person helping you know\nYou should be able to sign in now, If you can then it is recommended to change your password"
+zenmessdia="error"
+
+fi
+if [[ $( zenity --${zenmessdia} --title="Hosts File Fixer done!" --text="${exittext}" --width=300; echo $? ) != 0 ]]
+then 
+	clear
+	echo "$exittext"
+	echo -n "Press Enter to exit..."
+	read
+	exit
+else
+	exit
+fi
+
+
